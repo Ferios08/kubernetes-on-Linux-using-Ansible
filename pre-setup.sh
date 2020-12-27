@@ -2,10 +2,10 @@
 echo -n "Welcome to the Pre Setup script"
 echo -n "backing up  old configurations"
 mkdir -p backup
-mv env_variables hosts backup/
+mv -f env_variables hosts backup/ 2>/dev/null; true
 echo -n "a Copy of hosts & env_variables will be created and modified for your setup"
-cp templates/env_variables-template  env_variables
-cp templates/hosts-template  hosts
+cp -f templates/env_variables-template  env_variables 2>/dev/null; true
+cp -f templates/hosts-template  hosts 2>/dev/null; true
 
 echo -n "What is the master's private IP?"
 read pvip
