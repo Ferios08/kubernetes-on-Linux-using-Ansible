@@ -11,7 +11,7 @@ k8s-version: 1.19.0-00
 
 
 POD_NETWORK : weavenet
-LetEncrypytEmail : mail
+LetEncrypytEmail : mymail
 
 # Do not change.
 token_file: join_token

@@ -6,7 +6,7 @@
   tasks:
     - name: OS Detecting test
       shell: echo "Detected CentOS System"
-      when: ansible_os_family == "CentOS"
+      when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: OS Detecting test
       shell: echo "Detected Debian System"
@@ -24,7 +24,7 @@
     - name: Installing Dependencies (Ubuntu)
       become: yes
       apt:
-        name: [curl, wget]
+        name: [curl, wget, lvm2]
         state: latest
       when: ansible_os_family == "Debian"
 
@@ -33,7 +33,7 @@
       yum:
         name: [yum-utils, device-mapper-persistent-data, lvm2, wget]
         state: latest
-      when: ansible_os_family == "CentOS"
+      when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Adding Kubernetes repository (Ubuntu)
       become: yes
@@ -49,7 +49,7 @@
       file:
         path: /etc/yum.repos.d/kubernetes.repo
         state: touch
-      when: ansible_os_family == "CentOS"
+      when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Adding repository details in Kubernetes repo file (CentOS)
       become: yes
@@ -63,7 +63,7 @@
           gpgcheck=1
           repo_gpgcheck=1
           gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-      when: ansible_os_family == "CentOS"
+      when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Installing Docker
       become: yes
@@ -141,7 +141,7 @@
           - kubectl-{{version}}
           - kubeadm-{{version}}
           - kubelet-{{version}}
-      when: ansible_os_family == "CentOS"
+      when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Starting and Enabling docker service
       become: yes
