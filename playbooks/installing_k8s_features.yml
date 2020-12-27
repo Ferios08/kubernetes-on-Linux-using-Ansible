@@ -1,0 +1,60 @@
+- hosts: kubernetes-master-node
+  vars_files:
+  - ../env_variables
+  
+  tasks:
+  - name: Installing Ingress Nginx
+    shell: kubectl apply -f {{INGRESS_URL}}
+
+  - name: Patching Ingress deployment
+    shell: kubectl patch deployment ingress-nginx-controller -n ingress-nginx --patch '{"spec":{"template":{"spec":{"hostNetwork":true}}}}'
+    args:
+      executable: /bin/bash
+    retries: 5
+    delay: 20
+
+  - name: Installing Cert-manager
+    shell: |
+     kubectl create namespace cert-manager
+     kubectl apply -f {{CERTMANAGER_URL}}
+    args:
+      executable: /bin/bash
+
+  - name: Setting up Let's encrypt
+    shell: |
+     cat <<EOF | kubectl create -f -
+     apiVersion: cert-manager.io/v1alpha2
+     kind: ClusterIssuer
+     metadata:
+     name: letsencrypt
+     namespace: cert-manager
+     spec:
+     acme:
+       server: https://acme-v02.api.letsencrypt.org/directory
+       email: {{LetEncrypytEmail}}
+       privateKeySecretRef:
+         name: letsencrypt
+       solvers:
+       - http01:
+           ingress:
+             class: nginx
+     EOF
+    args:
+      executable: /bin/bash
+    retries: 5
+    delay: 30
+
+  - name: Installing OpenEBS
+    shell: kubectl apply -f {{OPENEBES_URL}}
+    args:
+      executable: /bin/bash
+
+  - name: Patching OpenEBS to be the default storage class
+    shell: |
+     kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+    args:
+      executable: /bin/bash
+    retries: 5
+    delay: 20
+
+  

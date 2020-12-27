@@ -1,0 +1,46 @@
+---
+- hosts: kubernetes-master-node
+  vars_files:
+  - ../env_variables
+
+  tasks:
+
+
+
+  
+  
+  - name: Copy OpenEBS Addon file
+    copy:
+      src: ./../files/openebs-operator-1.5.0.yaml
+      dest: openebs-operator-1.5.0.yaml
+ 
+  - name: Applying OpenEBS file
+    shell: |
+      source   /etc/environment 
+      source  /home/{{user}}/.bash_profile 
+       kubectl apply -f openebs-operator-1.5.0.yaml
+    args:
+      executable: /bin/bash
+    retries: 3
+    delay: 10
+    register: result
+    until: result.rc == 0
+
+
+  - name: Delete OpenEBS file
+    shell: rm  openebs-operator-1.5.0.yaml
+
+
+  - pause: seconds=70
+
+  - name: Patching OpenEBS as default Storage class
+    shell: | 
+      kubectl patch storageclass openebs-hostpath -p \
+      '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+    args:
+      executable: /bin/bash
+    retries: 3
+    delay: 30
+    register: result
+    until: result.rc == 0
+

@@ -1,0 +1,10 @@
+---
+
+- import_playbook: playbooks/prerequisites.yml
+- import_playbook: playbooks/setting_up_nodes.yml
+- import_playbook: playbooks/configure_master_node.yml
+- import_playbook: setup_worker_nodes.yml
+
+# After The cluster setup, installing important features.
+
+- import_playbook: playbooks/installing_k8s_features.yml

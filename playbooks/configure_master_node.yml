@@ -1,0 +1,42 @@
+---
+- hosts: kubernetes-master-node
+  set_fact:
+    network_plugin: {{POD_NETWORK default(weavenet)}} 
+    
+
+  vars_files:
+  - ../env_variables
+  tasks:
+  - name: Pulling images required for setting up a Kubernetes cluster
+    shell: sudo kubeadm config images pull
+
+  - name: Resetting kubeadm
+    shell: sudo kubeadm reset -f
+    register: output
+
+  - name: Initializing Kubernetes cluster
+    shell:  sudo kubeadm init --apiserver-cert-extra-sans={{cluster_prv_ip}},{{cluster_pub_ip}}
+
+    register: output
+
+  - name: Storing Logs and Generated token for future purpose.
+    local_action: copy content={{ output.stdout }} dest=/home/{{user}}/{{ token_file }}
+
+  - name: Copying required files
+    shell: |
+     # sudo sed -i 's/{{cluster_prv_ip}}/{{cluster_pub_ip}}/g' /etc/kubernetes/admin.conf
+     mkdir -p $HOME/.kube
+     sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+     sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+  - name: Installing Weavenet Network Addon
+    shell: |
+     kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    when: network_plugin == "weavenet"
+
+  - name: IInstalling Calico Network Addon
+    shell: |
+     kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+     kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
+    when: network_plugin == "calico"

@@ -1,0 +1,23 @@
+#Enter the IP Address of the Kubernetes Master node to the ad_addr variable.
+cluster_prv_ip: internalIP
+cluster_pub_ip: externalIP
+user: username
+
+# The kubernetes version you need to install
+# Please be careful of the fact that version form is different in Ubuntu and and CentOS
+# For Example in Ubuntu we have 1.19.0-00, in centOS it is 1.19.0
+# Leave empty to install the defaul version which is 1.19.0-00
+k8s-version: 1.19.0-00
+
+
+POD_NETWORK : weavenet
+LetEncrypytEmail : mail
+
+# Do not change.
+token_file: join_token
+
+# For easy update/upgrade, just change the URL:
+INGRESS_URL: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/cloud/deploy.yaml
+OPENEBES_URL: https://openebs.github.io/charts/openebs-operator.yaml
+CERTMANAGER_URL: https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
+

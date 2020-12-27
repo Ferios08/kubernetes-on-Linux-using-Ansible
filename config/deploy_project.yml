@@ -1,0 +1,38 @@
+---
+- name: Deploying a new kubernetes project
+  hosts: kubernetes-master-node
+  vars_files:
+  - ../env_variables
+  vars_prompt:
+
+    - name: "filename"
+      prompt: "Please enter YAML full filename existing on project folder"
+      private: no
+      unsafe: yes
+  tasks:
+
+
+    
+
+    - name: Copy Project file
+      copy:
+        src: "./project/{{filename}}"
+        dest: "{{filename}}"
+
+
+
+
+
+    - name: Deploying Project
+      shell: | 
+        source   /etc/environment 
+        source  /home/{{user}}/.bash_profile 
+        kubectl apply -f {{filename}}
+
+      retries: 3
+      delay: 10
+      register: result
+      until: result.rc == 0
+
+    - name: Delete YAML file
+      shell: rm  {{filename}}

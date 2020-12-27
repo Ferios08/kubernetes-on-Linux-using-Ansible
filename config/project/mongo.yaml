@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+  namespace: db
+spec:
+  capacity:
+    storage: 5Gi # This size is used to match a volume to a tenents claim
+  accessModes:
+    - ReadWriteOnce 			# Access modes are defined below
+  persistentVolumeReclaimPolicy: Retain # Reclaim policies are defined below 
+  claimRef:
+    namespace: db
+    name: mongodb-storage
+  nfs:
+    server: 10.171.47.193		# Please change this to your NFS server
+    path: /home/data/mongo1  			# Please change this to the relevant share
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-storage
+  namespace: db
+spec:
+  accessModes:
+    - ReadWriteOnce 	# Access modes for volumes is defined under Persistent Volumes
+  resources:
+    requests:
+      storage: 5Gi 	# volume size requested
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: db
+  labels:
+    app: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:3.6.9
+          command: ["mongod", "--nojournal", "--bind_ip_all"]
+          resources:
+            limits: { memory: "100Mi", cpu: "100m" }
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-storage
+              mountPath: /data/db
+              subPath: db
+          readinessProbe:
+            exec:
+              command:
+              - mongo
+              - --eval
+              - "db.adminCommand('ping')"
+            timeoutSeconds: 5
+      volumes:
+      - name: mongodb-storage
+        persistentVolumeClaim:
+          claimName: mongodb-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: db
+spec:
+  type: LoadBalancer
+  selector:
+    app: mongodb
+  ports:
+  - name: http
+    nodePort: 30017
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+

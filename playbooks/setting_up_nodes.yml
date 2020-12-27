@@ -1,0 +1,158 @@
+---
+- hosts: all
+  vars_files:
+    - ../env_variables
+  
+  tasks:
+    - name: OS Detecting test
+      shell: echo "Detected CentOS System"
+      when: ansible_os_family == "CentOS"
+
+    - name: OS Detecting test
+      shell: echo "Detected Debian System"
+      when: ansible_os_family == "Debian"
+
+    - name: Changing hostnames
+      shell: sudo hostnamectl set-hostname {{ansible_hostname}}
+
+    - name: Add Hostname to /etc/hosts
+      become: yes
+      shell: grep -q 'k8s' /etc/hosts && echo exists || echo "{{ansible_host}} {{ansible_hostname}}" >> /etc/hosts
+      register: result
+      changed_when: result.stdout.find('exists') == -1
+
+    - name: Installing Dependencies (Ubuntu)
+      become: yes
+      apt:
+        name: [curl, wget]
+        state: latest
+      when: ansible_os_family == "Debian"
+
+    - name: Installing Dependencies (CentOS)
+      become: yes
+      yum:
+        name: [yum-utils, device-mapper-persistent-data, lvm2, wget]
+        state: latest
+      when: ansible_os_family == "CentOS"
+
+    - name: Adding Kubernetes repository (Ubuntu)
+      become: yes
+      shell: |
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+        cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+        deb https://apt.kubernetes.io/ kubernetes-xenial main
+        EOF
+      when: ansible_os_family == "Debian"
+
+    - name: Creating a repository file for Kubernetes (CentOS)
+      become: yes
+      file:
+        path: /etc/yum.repos.d/kubernetes.repo
+        state: touch
+      when: ansible_os_family == "CentOS"
+
+    - name: Adding repository details in Kubernetes repo file (CentOS)
+      become: yes
+      blockinfile:
+        path: /etc/yum.repos.d/kubernetes.repo
+        block: |
+          [kubernetes]
+          name=Kubernetes
+          baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+          enabled=1
+          gpgcheck=1
+          repo_gpgcheck=1
+          gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      when: ansible_os_family == "CentOS"
+
+    - name: Installing Docker
+      become: yes
+      shell: |
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
+      
+
+    - name: Changing docker defaul cgroup.
+      become: yes
+      shell: |
+        mkdir -p /etc/docker
+        cat << EOF |  tee /etc/docker/daemon.json
+        {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+        "max-size": "100m"
+           },
+        "storage-driver": "overlay2"
+        }
+        EOF
+
+    - name: Adding Docker to $USER Group
+      become: yes
+      shell: |
+        groupadd docker
+        usermod -aG docker {{user}}
+        systemctl daemon-reload
+      ignore_errors: yes
+
+    - name: Create Docker proxy service file
+      become: yes
+      shell: |
+        mkdir -p /etc/systemd/system/docker.service.d
+        touch /etc/systemd/system/docker.service.d/http-proxy.conf
+
+    - name: Setting Docker proxy
+      become: yes
+      blockinfile:
+        path: /etc/systemd/system/docker.service.d/http-proxy.conf
+        block: |
+          [Service]
+          Environment="HTTP_PROXY=" "HTTPS_PROXY=" "NO_PROXY="
+
+    - name: Restarting Docker service
+      become: yes
+      shell: |
+        systemctl daemon-reload
+        systemctl restart docker
+
+    - name: Installing Kubernetes (Ubuntu)
+      set_fact: 
+        version : {{k8s-version | default(1.19.0-00)}}
+      become: yes
+      apt:
+        name: {{item}}
+        state: installed 
+        update_cache: yes
+        with_itmes:
+          - kubectl={{version}}
+          - kubeadm={{version}}
+          - kubelet={{version}}
+      when: ansible_os_family == "Debian"
+
+    - name: Installing Kubernetes (CentOS)
+      set_fact: 
+        version : {{ k8s-version | default(1.19.0) }}
+      become: yes
+      yum:
+        name: {{item}}
+        state: installed 
+        update_cache: yes
+        with_itmes:
+          - kubectl-{{version}}
+          - kubeadm-{{version}}
+          - kubelet-{{version}}
+      when: ansible_os_family == "CentOS"
+
+    - name: Starting and Enabling docker service
+      become: yes
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Starting and Enabling Kubelet service
+      become: yes
+      service:
+        name: kubelet
+        state: started
+        enabled: yes

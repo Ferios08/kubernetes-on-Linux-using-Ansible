@@ -1,0 +1,36 @@
+---
+- hosts: all
+  vars_files:
+  - ../env_variables
+  tasks:
+  - name: Disabling Swap on all nodes
+    shell: swapoff -a
+    become: yes
+    become_user: root
+    args:
+      executable: /bin/bash    
+     
+  - name: Commenting Swap entries in /etc/fstab
+    become: yes
+    become_user: root
+    replace:
+     path: /etc/fstab
+     regexp: '(.*swap*)'
+     replace: '#\1'
+ 
+  - name: Enabling iptable bridge network
+    become: yes
+    shell: sudo sysctl net.bridge.bridge-nf-call-iptables=1
+
+  - name: Setting SELinux to permessive mode (CentOS)
+    become: yes
+    shell: |
+     sudo setenforce 0
+     sudo sed -i ‘s/^SELINUX=enforcing$/SELINUX=permissive/’ /etc/selinux/config
+    when: ansible_os_family == "CentOS"
+
+
+
+  
+
+  
