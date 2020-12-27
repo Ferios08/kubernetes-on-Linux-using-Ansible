@@ -18,7 +18,8 @@ sed -i "s/externalIP/$pbip/g" env_variables
 echo -n "What is your default user?: "
 read username
 
-sed -i "s/ansible_host=/ansible_host=$username/g" hosts
+sed -i "s/ansible_host=/ansible_host=$pvip/g" hosts
+sed -i "s/ ansible_user=/ansible_user=$username/g"hosts
 sed -i "s/username/$username/g" env_variables
 
 
