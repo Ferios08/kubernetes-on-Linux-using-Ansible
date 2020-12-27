@@ -18,8 +18,8 @@ sed -i "s/externalIP/$pbip/g" env_variables
 echo -n "What is your default user?: "
 read username
 
-sed -i "s/ansible_host=/ansible_host=$pvip/g" hosts
-sed -i "s/aansible_user=/ansible_user=$username/g" hosts
+sed -i "s/ansible_host=/ansible_host=$username/g" hosts
+sed -i "s/username/$username/g" env_variables
 
 
 echo -n "How many worker nodes do you have?: "
@@ -36,7 +36,7 @@ done
 
 echo -n "Please enter your mail that will be used by lets Encypt: "
 read mail
-sed -i "s/mymail/$pbip/g" env_variables
+sed -i "s/mymail/$mail/g" env_variables
 
 echo -n "Please choose which Pod network plugin to install? actually supporting weavenet and calico: "
 read plugin
@@ -54,5 +54,6 @@ sleep 1
 echo -ne '########################   (100%) Setup completed! \r'
 echo -ne '\n'
 
-echo -e "Please Note that this Script back your current setup up if launched again, and it will overwrite any backed up configuration"
-echo -e "you can check the  env_variables and hosts file to verify your actual configuration"
+echo -e "Please Note that this Script back your current setup up if launched again, and it will overwrite any backed up configuration\n"
+echo -e "##############################################################################################\n"
+echo -e "you can check the  env_variables and hosts file to verify your actual configuration :)"
