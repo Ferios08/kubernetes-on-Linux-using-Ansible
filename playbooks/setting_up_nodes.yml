@@ -1,8 +1,7 @@
 ---
 - hosts: all
   vars_files:
-    - ../env_variables
-  
+    - ../env_variables 
   tasks:
     - name: OS Detecting test
       shell: echo "Detected CentOS System"
@@ -116,31 +115,28 @@
         systemctl restart docker
 
     - name: Installing Kubernetes (Ubuntu)
-      set_fact: 
-        version : "{{ k8s-version | default(1.19.0-00)}}"
+
       become: yes
       apt:
         name: "{{ item }}"
         state: installed 
         update_cache: yes
         with_itmes:
-          - kubectl={{version}}
-          - kubeadm={{version}}
-          - kubelet={{version}}
+          - kubectl={{k8s-version}}
+          - kubeadm={{k8s-version}}
+          - kubelet={{k8s-version}}
       when: ansible_os_family == "Debian"
 
     - name: Installing Kubernetes (CentOS)
-      set_fact: 
-        version : "{{ k8s-version | default(1.19.0) }}"
       become: yes
       yum:
         name: "{{ item }}"
         state: installed 
         update_cache: yes
         with_itmes:
-          - kubectl-{{version}}
-          - kubeadm-{{version}}
-          - kubelet-{{version}}
+          - kubectl-{{k8s-version}}
+          - kubeadm-{{k8s-version}}
+          - kubelet-{{k8s-version}}
       when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Starting and Enabling docker service
