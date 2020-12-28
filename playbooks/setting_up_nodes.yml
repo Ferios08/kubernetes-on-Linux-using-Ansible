@@ -117,10 +117,10 @@
 
     - name: Installing Kubernetes (Ubuntu)
       set_fact: 
-        version : {{k8s-version | default(1.19.0-00)}}
+        version : "{{ k8s-version | default(1.19.0-00)}}"
       become: yes
       apt:
-        name: {{item}}
+        name: "{{ item }}"
         state: installed 
         update_cache: yes
         with_itmes:
@@ -131,10 +131,10 @@
 
     - name: Installing Kubernetes (CentOS)
       set_fact: 
-        version : {{ k8s-version | default(1.19.0) }}
+        version : "{{ k8s-version | default(1.19.0) }}"
       become: yes
       yum:
-        name: {{item}}
+        name: "{{ item }}"
         state: installed 
         update_cache: yes
         with_itmes:
