@@ -21,6 +21,7 @@
   - name: Enabling iptable bridge network
     become: yes
     shell: sudo sysctl net.bridge.bridge-nf-call-iptables=1
+    ignore_errors: yes
 
   - name: Setting SELinux to permessive mode (CentOS)
     become: yes
