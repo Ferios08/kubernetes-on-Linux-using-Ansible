@@ -8,7 +8,7 @@ user: username
 # For Example in Ubuntu we have 1.19.0-00, in centOS it is 1.19.0
 # Leave empty to install the defaul version which is 1.19.0-00
 
-k8s-version: 1.19.0-00
+k8s_version: 1.19.0-00
 
 
 POD_NETWORK : weavenet
