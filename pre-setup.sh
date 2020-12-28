@@ -7,6 +7,10 @@ echo -e "a Copy of hosts & env_variables will be created and modified for your s
 cp -f templates/env_variables-template  env_variables 2>/dev/null; true
 cp -f templates/hosts-template  hosts 2>/dev/null; true
 
+#Installing dependencies
+echo -e "Installing dependencies"
+sudo apt-get update && sudo apt install sshpass -y
+
 echo -n "What is the master's private IP?: "
 read pvip
 sed -i "s/internalIP/$pvip/g" env_variables
