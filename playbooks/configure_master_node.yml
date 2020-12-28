@@ -1,6 +1,6 @@
 ---
 - hosts: kubernetes-master-node
-  set_fact:
+  var:
     network_plugin: "{{ POD_NETWORK }}"
     
 
