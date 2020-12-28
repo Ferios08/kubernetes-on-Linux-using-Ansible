@@ -130,10 +130,10 @@
 
       become: yes
       apt:
-        name: "{{ item }}"
+        name: "{{ item }}={{ k8s_version }}"
         state: installed 
         update_cache: yes
-        with_itmes:
+      with_itmes:
           - kubectl
           - kubeadm
           - kubelet
@@ -142,10 +142,10 @@
     - name: Installing Kubernetes (CentOS)
       become: yes
       yum:
-        name: "{{ item }}"
+        name: "{{ item }}-{{ k8s_version }}"
         state: installed 
         update_cache: yes
-        with_itmes:
+      with_itmes:
           - kubectl
           - kubeadm
           - kubelet
