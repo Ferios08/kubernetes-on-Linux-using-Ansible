@@ -1,7 +1,7 @@
 ---
 - hosts: kubernetes-master-node
   set_fact:
-    network_plugin: {{POD_NETWORK default(weavenet)}} 
+    network_plugin: "{{ POD_NETWORK }}"
     
 
   vars_files:
