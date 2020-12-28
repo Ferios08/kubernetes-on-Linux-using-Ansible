@@ -26,12 +26,41 @@ sed -i "s/username/$username/g" env_variables
 echo -n "How many worker nodes do you have?: "
 read workers
 
+# Generating ssh key / ignoring if already exist
+ssh-keygen -t rsa -f $HOME/.ssh/id_rsa  -q -P ""  <<< y
+
+# Assuming that all nodes have the same password, asking the user to enter it:
+read -s -p "Please insert your nodes' Password: " password
+echo
+read -s -p "Password comfirm: " password2
+
+# check if passwords match and if not ask again
+while [ "$password" != "$password2" ];
+do
+    echo
+    echo "Please try again"
+    read -s -p "Password: " password
+    echo
+    read -s -p "Password (again): " password2
+done
+
+# Copy the ssh key to the master
+sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$pvip 
+ echo -n "Copied ssh-key to master node Node.\n"
+
+
+echo -n "How many worker nodes do you have?: "
+read workers
 for (( i = 1; i < workers+1; i++ ))
 do
 
    echo -n "enter ther worker number $i's ip: "
    read ip
    echo "k8s-worker-$i ansible_host=$ip  ansible_user=$username" >> hosts
+   echo -n "Node worker-$i added to hosts file.\n"
+
+   sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$ip 
+   echo -n "Copied ssh-key to worker-$i Node.\n"
 
 done
 
