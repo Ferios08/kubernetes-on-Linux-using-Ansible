@@ -134,9 +134,9 @@
         state: installed 
         update_cache: yes
         with_itmes:
-          - kubectl={{k8s-version}}
-          - kubeadm={{k8s-version}}
-          - kubelet={{k8s-version}}
+          - kubectl="{{k8s-version}}"
+          - kubeadm="{{k8s-version}}"
+          - kubelet="{{k8s-version}}"
       when: ansible_os_family == "Debian"
 
     - name: Installing Kubernetes (CentOS)
