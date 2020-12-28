@@ -127,16 +127,15 @@
         systemctl restart docker
 
     - name: Installing Kubernetes (Ubuntu)
-
       become: yes
       apt:
-        name: "{{ item }}={{ k8s_version }}"
+        name: "{{ item }}"
         state: installed 
         update_cache: yes
       with_itmes:
-          - kubectl
-          - kubeadm
-          - kubelet
+        - kubectl={{ k8s_version }}
+        - kubeadm={{ k8s_version }}
+        - kubelet={{ k8s_version }}
       when: ansible_os_family == "Debian"
 
     - name: Installing Kubernetes (CentOS)
