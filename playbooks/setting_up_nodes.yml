@@ -49,7 +49,7 @@
     - name: Adding repository details in Kubernetes repo file  (Ubuntu)
       become: yes
       blockinfile:
-        path: /etc/yum.repos.d/kubernetes.repo
+        path: /etc/apt/sources.list.d/kubernetes.list
         block: |
           deb https://apt.kubernetes.io/ kubernetes-xenial main
       when: ansible_os_family == "Debian"
