@@ -34,13 +34,24 @@
         state: latest
       when: ansible_os_family in ["CentOS","RedHat"]
 
-    - name: Adding Kubernetes repository (Ubuntu)
+    - name: Creating a repository file for Kubernetes (Ubuntu)
+      become: yes
+      file:
+       path: /etc/apt/sources.list.d/kubernetes.list
+       state: touch
+      when: ansible_os_family == "Debian"
+
+    - name: Adding Kubernetes repository gpg key (Ubuntu)
       become: yes
       shell: |
         curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-        cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
-        deb https://apt.kubernetes.io/ kubernetes-xenial main
-        EOF
+      when: ansible_os_family == "Debian"
+    - name: Adding repository details in Kubernetes repo file  (Ubuntu)
+      become: yes
+      blockinfile:
+        path: /etc/yum.repos.d/kubernetes.repo
+        block: |
+          deb https://apt.kubernetes.io/ kubernetes-xenial main
       when: ansible_os_family == "Debian"
 
     - name: Creating a repository file for Kubernetes (CentOS)
