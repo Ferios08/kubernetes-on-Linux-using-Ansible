@@ -130,13 +130,9 @@
 
       become: yes
       apt:
-        name: "{{ item }}"
+        name: ["kubectl={{k8s-version}}" , "kubeadm={{k8s-version}}", "kubelet={{k8s-version}}"]
         state: installed 
         update_cache: yes
-        with_itmes:
-          - kubectl="{{k8s_version}}"
-          - kubeadm="{{k8s_version}}"
-          - kubelet="{{k8s_version}}"
       when: ansible_os_family == "Debian"
 
     - name: Installing Kubernetes (CentOS)
@@ -146,9 +142,9 @@
         state: installed 
         update_cache: yes
         with_itmes:
-          - kubectl-{{k8s_version}}
-          - kubeadm-{{k8s_version}}
-          - kubelet-{{k8s_version}}
+          - kubectl-{{k8s-version}}
+          - kubeadm-{{k8s-version}}
+          - kubelet-{{k8s-version}}
       when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Starting and Enabling docker service
