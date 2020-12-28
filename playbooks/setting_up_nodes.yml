@@ -129,14 +129,14 @@
     - name: Installing Kubernetes (Ubuntu)
       become: yes
       shell: |
-        apt install -y kubelet={{ k8s_version }} kubeadm={{ k8s_version }} kubectl={{ k8s_version }}
+        apt install -y kubelet={{ VERSION }} kubeadm={{ VERSION }} kubectl={{ VERSION }}
         apt-mark hold kubelet kubeadm kubectl    
       when: ansible_os_family == "Debian"
 
     - name: Installing Kubernetes (CentOS)
       become: yes
       yum:
-        name: "{{ item }}-{{ k8s_version }}"
+        name: "{{ item }}-{{ VERSION }}"
         state: installed 
         update_cache: yes
       with_itmes:
