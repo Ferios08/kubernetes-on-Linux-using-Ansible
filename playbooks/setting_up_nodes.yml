@@ -130,20 +130,22 @@
     - name: Installing Kubernetes (Ubuntu)
       become: yes
       apt:
-        name: "{{ item }}={{ K8S_VERSION }}"
+        name: "{{ packages }}={{ K8S_VERSION }}"
         state: installed 
         update_cache: yes
-      with_itmes:
-          - kubectl
-          - kubeadm
-          - kubelet    
+      vars:
+        packages:
+        - kubectl
+        - kubeadm
+        - kubelet    
       when: ansible_os_family == "Debian"
 
     - name: Prevent kubeadm, kubectl, kubelet from upgrading
       dpkg_selections:
-        name: "{{ item }}"
+        name: "{{ packages }}"
         selection: hold
-      with_itmes:
+      vars:
+        packages:
           - kubectl
           - kubeadm
           - kubelet 
@@ -151,10 +153,11 @@
     - name: Installing Kubernetes (CentOS)
       become: yes
       yum:
-        name: "{{ item }}-{{ K8S_VERSION }}"
+        name: "{{ packages }}-{{ K8S_VERSION }}"
         state: installed 
         update_cache: yes
-      with_itmes:
+      vars:
+        packages:
           - kubectl
           - kubeadm
           - kubelet
