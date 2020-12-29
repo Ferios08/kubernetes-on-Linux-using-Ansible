@@ -51,7 +51,7 @@
   - name: Applying Let's encrypt manager Yaml setup
     shell: kubectl apply -f $HOME/letsencrypt.yaml
     register: result
-    retries: 5
+    retries: 10
     delay: 30
     until: result.rc == 0
 
