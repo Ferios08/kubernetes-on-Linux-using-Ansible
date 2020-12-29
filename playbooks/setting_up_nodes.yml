@@ -131,7 +131,7 @@
       become: yes
       apt:
         name: "{{ packages }}={{ K8S_VERSION }}"
-        state: installed 
+        state: present 
         update_cache: yes
       vars:
         packages:
@@ -154,7 +154,7 @@
       become: yes
       yum:
         name: "{{ packages }}-{{ K8S_VERSION }}"
-        state: installed 
+        state: present 
         update_cache: yes
       vars:
         packages:
