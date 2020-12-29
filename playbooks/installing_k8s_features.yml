@@ -37,7 +37,7 @@
       spec:
       acme:
         server: https://acme-v02.api.letsencrypt.org/directory
-        email: {{LetEncrypytEmail}}
+        email: "{{LetEncrypytEmail}}"
         privateKeySecretRef:
           name: letsencrypt
         solvers:
