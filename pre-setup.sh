@@ -52,6 +52,9 @@ echo # blanc line
 # Copy the ssh key to the master
 sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$pvip 
  echo -e "Copied ssh-key to master node."
+# Changing master's hostname
+ ssh $pvip sudo hostnamectl set-hostname k8s-master
+  echo -e "Changed master's hostname to k8s-master"
 
 
 
@@ -65,8 +68,10 @@ do
    echo # blanc line
 
    sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$ip 
-   echo -n "Copied ssh-key to worker-$i Node."
+   echo -e "Copied ssh-key to worker-$i Node."
    echo # blanc line
+   ssh $ip sudo hostnamectl set-hostname k8s-worker-$i
+   echo -e "Changed node's hostname to k8s-worker-$i"
 
 done
 
