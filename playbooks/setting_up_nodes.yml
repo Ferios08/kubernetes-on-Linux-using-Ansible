@@ -3,11 +3,11 @@
   vars_files:
     - ../env_variables 
   tasks:
-    - name: OS Detecting test
+    - name: OS Detecting test-CentOS
       shell: echo "Detected CentOS System"
       when: ansible_os_family in ["CentOS","RedHat"]
 
-    - name: OS Detecting test
+    - name: OS Detecting test-Ubuntu
       shell: echo "Detected Debian System"
       when: ansible_os_family == "Debian"
 
