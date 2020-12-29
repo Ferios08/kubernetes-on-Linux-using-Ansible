@@ -135,14 +135,15 @@
         update_cache: yes
       vars:
         packages:
-        - kubectl={{ K8S_VERSION }}
-        - kubeadm={{ K8S_VERSION }}
-        - kubelet={{ K8S_VERSION }}
+        - kubectl={{ UBUNTU_K8S_VERSION }}
+        - kubeadm={{ UBUNTU_K8S_VERSION }}
+        - kubelet={{ UBUNTU_K8S_VERSION }}
       when: ansible_os_family == "Debian"
 
     - name: Prevent kubeadm, kubectl, kubelet from upgrading
       become: yes
       shell:  apt-mark hold kubelet kubeadm kubectl
+      when: ansible_os_family == "Debian"
 
     - name: Installing Kubernetes (CentOS)
       become: yes
@@ -152,9 +153,9 @@
         update_cache: yes
       vars:
         packages:
-        - kubectl={{ K8S_VERSION }}
-        - kubeadm={{ K8S_VERSION }}
-        - kubelet={{ K8S_VERSION }}
+        - kubectl={{ CENTOS_K8S_VERSION }}
+        - kubeadm={{ CENTOS_K8S_VERSION }}
+        - kubelet={{ CENTOS_K8S_VERSION }}
       when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Starting and Enabling docker service
