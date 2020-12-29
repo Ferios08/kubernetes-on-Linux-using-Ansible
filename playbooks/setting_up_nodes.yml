@@ -142,14 +142,7 @@
 
     - name: Prevent kubeadm, kubectl, kubelet from upgrading
       become: yes
-      dpkg_selections:
-        name: "{{ packages }}"
-        selection: hold
-      vars:
-        packages:
-          - kubectl
-          - kubeadm
-          - kubelet 
+      shell:  apt-mark hold kubelet kubeadm kubectl
 
     - name: Installing Kubernetes (CentOS)
       become: yes
