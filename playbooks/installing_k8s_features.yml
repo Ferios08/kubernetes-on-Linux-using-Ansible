@@ -29,21 +29,21 @@
     blockinfile:
       path: 
       block: |
-      apiVersion: cert-manager.io/v1alpha2
-      kind: ClusterIssuer
-      metadata:
-      name: letsencrypt
-      namespace: cert-manager
-      spec:
-      acme:
-        server: https://acme-v02.api.letsencrypt.org/directory
-        email: "{{LetEncrypytEmail}}"
-        privateKeySecretRef:
-          name: letsencrypt
-        solvers:
-        - http01:
-            ingress:
-              class: nginx
+        apiVersion: cert-manager.io/v1alpha2
+        kind: ClusterIssuer
+        metadata:
+        name: letsencrypt
+        namespace: cert-manager
+        spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+          email: "{{LetEncrypytEmail}}"
+          privateKeySecretRef:
+            name: letsencrypt
+          solvers:
+          - http01:
+              ingress:
+                class: nginx
 
   - name: Applying Let's encrypt manager Yaml setup
     shell: kubectl apply -f letsencrypt.yaml
