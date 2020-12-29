@@ -22,12 +22,12 @@
 
   - name: Creating Let's encrypt manager Yaml setup
     file:
-      path: letsencrypt.yaml
+      path: $HOME/letsencrypt.yaml
       state: touch
 
   - name: Setting up Let's encrypt manager Yaml file
     blockinfile:
-      path: 
+      path: $HOME/letsencrypt.yaml
       block: |
         apiVersion: cert-manager.io/v1alpha2
         kind: ClusterIssuer
