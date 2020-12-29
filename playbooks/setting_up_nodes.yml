@@ -12,7 +12,8 @@
       when: ansible_os_family == "Debian"
 
     - name: Changing hostnames
-      shell: sudo hostnamectl set-hostname {{ansible_hostname}}
+      become: yes
+      shell:  hostnamectl set-hostname {{ansible_hostname}}
 
     - name: Add Hostname to /etc/hosts
       become: yes
@@ -128,15 +129,29 @@
 
     - name: Installing Kubernetes (Ubuntu)
       become: yes
-      shell: |
-        apt install -y kubelet={{ VERSION }} kubeadm={{ VERSION }} kubectl={{ VERSION }}
-        apt-mark hold kubelet kubeadm kubectl    
+      apt:
+        name: "{{ item }}={{ K8S_VERSION }}"
+        state: installed 
+        update_cache: yes
+      with_itmes:
+          - kubectl
+          - kubeadm
+          - kubelet    
       when: ansible_os_family == "Debian"
+
+    - name: Prevent kubeadm, kubectl, kubelet from upgrading
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      with_itmes:
+          - kubectl
+          - kubeadm
+          - kubelet 
 
     - name: Installing Kubernetes (CentOS)
       become: yes
       yum:
-        name: "{{ item }}-{{ VERSION }}"
+        name: "{{ item }}-{{ K8S_VERSION }}"
         state: installed 
         update_cache: yes
       with_itmes:

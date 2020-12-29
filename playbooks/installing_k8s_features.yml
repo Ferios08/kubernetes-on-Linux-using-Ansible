@@ -20,9 +20,9 @@
     args:
       executable: /bin/bash
 
-  - name: Setting up Let's encrypt
+  - name: Creating Let's encrypt manager Yaml setup
     shell: |
-     cat <<EOF | kubectl create -f -
+     cat <<EOF | tee letsencrypt.yaml
      apiVersion: cert-manager.io/v1alpha2
      kind: ClusterIssuer
      metadata:
@@ -44,6 +44,13 @@
     retries: 5
     delay: 30
 
+  - name: Applying Let's encrypt manager Yaml setup
+    shell: kubectl apply -f letsencrypt.yaml
+    args:
+      executable: /bin/bash
+    retries: 5
+    delay: 30
+
   - name: Installing OpenEBS
     shell: kubectl apply -f {{OPENEBES_URL}}
     args:
@@ -56,5 +63,10 @@
       executable: /bin/bash
     retries: 5
     delay: 20
+
+  - name: Removing install files
+    shell: rm -f get-docker.sh letsencrypt.yaml
+    args:
+      executable: /bin/bash
 
   
