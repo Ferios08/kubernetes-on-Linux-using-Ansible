@@ -130,14 +130,14 @@
     - name: Installing Kubernetes (Ubuntu)
       become: yes
       apt:
-        name: "{{ packages }}={{ K8S_VERSION }}"
+        name: "{{ packages }}"
         state: present 
         update_cache: yes
       vars:
         packages:
-        - kubectl
-        - kubeadm
-        - kubelet    
+        - kubectl={{ K8S_VERSION }}
+        - kubeadm={{ K8S_VERSION }}
+        - kubelet={{ K8S_VERSION }}
       when: ansible_os_family == "Debian"
 
     - name: Prevent kubeadm, kubectl, kubelet from upgrading
