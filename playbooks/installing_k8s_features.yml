@@ -10,8 +10,10 @@
     shell: kubectl patch deployment ingress-nginx-controller -n ingress-nginx --patch '{"spec":{"template":{"spec":{"hostNetwork":true}}}}'
     args:
       executable: /bin/bash
+    register: result
     retries: 5
     delay: 20
+    until: result.rc == 0
 
   - name: Installing Cert-manager
     shell: |
@@ -63,8 +65,10 @@
      kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
     args:
       executable: /bin/bash
+    register: result
     retries: 5
     delay: 20
+    until: result.rc == 0
 
   - name: Removing install files
     shell: rm -f get-docker.sh letsencrypt.yaml
