@@ -26,8 +26,8 @@
   - name: Setting SELinux to permessive mode (CentOS)
     become: yes
     shell: |
-     sudo setenforce 0
-     sudo sed -i ‘s/^SELINUX=enforcing$/SELINUX=permissive/’ /etc/selinux/config
+      setenforce 0
+      sed -i s/^SELINUX=.*$/SELINUX=permissive/ /etc/selinux/config
     when: ansible_os_family in ["CentOS","RedHat"]
     ignore_errors: yes
 
