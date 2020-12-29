@@ -148,14 +148,14 @@
     - name: Installing Kubernetes (CentOS)
       become: yes
       yum:
-        name: "{{ packages }}-{{ K8S_VERSION }}"
+        name: "{{ packages }}"
         state: present 
         update_cache: yes
       vars:
         packages:
-        - kubectl={{ CENTOS_K8S_VERSION }}
-        - kubeadm={{ CENTOS_K8S_VERSION }}
-        - kubelet={{ CENTOS_K8S_VERSION }}
+        - kubectl-{{ CENTOS_K8S_VERSION }}
+        - kubeadm-{{ CENTOS_K8S_VERSION }}
+        - kubelet-{{ CENTOS_K8S_VERSION }}
       when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Starting and Enabling docker service
