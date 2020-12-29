@@ -141,6 +141,7 @@
       when: ansible_os_family == "Debian"
 
     - name: Prevent kubeadm, kubectl, kubelet from upgrading
+      become: yes
       dpkg_selections:
         name: "{{ packages }}"
         selection: hold
@@ -158,9 +159,9 @@
         update_cache: yes
       vars:
         packages:
-          - kubectl
-          - kubeadm
-          - kubelet
+        - kubectl={{ K8S_VERSION }}
+        - kubeadm={{ K8S_VERSION }}
+        - kubelet={{ K8S_VERSION }}
       when: ansible_os_family in ["CentOS","RedHat"]
 
     - name: Starting and Enabling docker service
