@@ -21,8 +21,14 @@
       executable: /bin/bash
 
   - name: Creating Let's encrypt manager Yaml setup
-    shell: |
-     cat <<EOF | tee letsencrypt.yaml
+    file:
+      path: letsencrypt.yaml
+      state: touch
+      
+  - name: Setting up Let's encrypt manager Yaml file
+    blockinfile:
+    path: 
+    block: |
      apiVersion: cert-manager.io/v1alpha2
      kind: ClusterIssuer
      metadata:
@@ -38,11 +44,6 @@
        - http01:
            ingress:
              class: nginx
-     EOF
-    args:
-      executable: /bin/bash
-    retries: 5
-    delay: 30
 
   - name: Applying Let's encrypt manager Yaml setup
     shell: kubectl apply -f letsencrypt.yaml
