@@ -129,7 +129,7 @@ else
     echo -e "Changed node's hostname to k8s-worker-$i"
 
   done
-
+fi
 echo -n "Please enter your mail that will be used by lets Encypt: "
 read mail
 sed -i "s/mymail/$mail/g" env_variables
