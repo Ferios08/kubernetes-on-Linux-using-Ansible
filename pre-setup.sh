@@ -7,9 +7,41 @@ echo -e "a Copy of hosts & env_variables will be created and modified for your s
 cp -f templates/env_variables-template  env_variables 2>/dev/null; true
 cp -f templates/hosts-template  hosts 2>/dev/null; true
 
-#Installing dependencies
-echo -e "Installing dependencies"
-sudo apt-get update && sudo apt install sshpass -y
+# Find out which system I am :)
+YUM_CMD=$(which yum)
+APT_GET_CMD=$(which apt-get)
+
+ if [[ ! -z $YUM_CMD ]]; then
+    echo -e "CentOS/RedHat detected"
+    sleep 1;
+ elif [[ ! -z $APT_GET_CMD ]]; then
+    echo -e "Debian/Ubuntu detected"
+    sleep 1;
+ else
+    echo -e "System not supported :("
+ fi
+
+#Installing dependencies, you can add as many dependencies as you want.
+./files/install_packages.sh sshpass
+
+#Installing Ansible
+while true; do
+    read -p "Do you want me to install ansible for you?:(yes/no)" yn
+    case $yn in
+        [Yy]* ) ./files/install_ansible.sh ; break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer with yes or no.";;
+    esac
+done
+
+ while true; do
+      read -p "Do you wish to taint your master Node?:(yes/no)" yn
+      case $yn in
+          [Yy]* ) sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables; break;;
+          [Nn]* ) exit;;
+          * ) echo "Please answer with yes or no.";;
+      esac
+  done
 
 echo -n "What is the master's private IP?: "
 read pvip
