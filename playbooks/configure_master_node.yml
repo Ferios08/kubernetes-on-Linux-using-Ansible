@@ -13,8 +13,9 @@
     register: output
 
   - name: Initializing Kubernetes cluster
-    shell:  sudo kubeadm init --apiserver-cert-extra-sans={{cluster_prv_ip}},{{cluster_pub_ip}}
-
+    shell:  |
+      unset http_proxy && unset https_proxy
+      sudo kubeadm init --apiserver-cert-extra-sans={{cluster_prv_ip}},{{cluster_pub_ip}}
     register: output
 
   - name: Storing Logs and Generated token for future purpose.
