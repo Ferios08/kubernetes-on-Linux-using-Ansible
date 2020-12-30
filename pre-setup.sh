@@ -8,8 +8,8 @@ cp -f templates/env_variables-template  env_variables 2>/dev/null; true
 cp -f templates/hosts-template  hosts 2>/dev/null; true
 
 # Find out which system I am :)
-YUM_CMD=$(which yum)
-APT_GET_CMD=$(which apt-get)
+YUM_CMD=$(which yum  2> /dev/null)
+APT_GET_CMD=$(which apt-get  2> /dev/null)
 
  if [[ ! -z $YUM_CMD ]]; then
     echo -e "CentOS/RedHat detected"

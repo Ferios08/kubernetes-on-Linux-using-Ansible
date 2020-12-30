@@ -1,6 +1,6 @@
 # Find out which system I am :)
-YUM_CMD=$(which yum)
-APT_GET_CMD=$(which apt-get)
+YUM_CMD=$(which yum  2> /dev/null)
+APT_GET_CMD=$(which apt-get  2> /dev/null)
 
 echo -e "Installing packages $*:"
 for i in $*; do  
