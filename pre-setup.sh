@@ -2,10 +2,11 @@
 echo -e "Welcome to the Pre Setup script"
 echo -e "backing up  old configurations"
 mkdir -p backup
-mv -f env_variables hosts backup/ 2>/dev/null; true
+mv -f env_variables hosts docker-proxy.conf backup/ 2>/dev/null; true
 echo -e "a Copy of hosts & env_variables will be created and modified for your setup"
 cp -f templates/env_variables-template  env_variables 2>/dev/null; true
 cp -f templates/hosts-template  hosts 2>/dev/null; true
+
 
 # Find out which system I am :)
 YUM_CMD=$(which yum  2> /dev/null)
@@ -142,20 +143,20 @@ echo -e "To install a specific version of Kubernetes, set it up manually in the 
 
 #Configuring Env Proxy
 while true; do
-    read -p "Are your nodes using a proxy?:(yes/no)" yn
+    read -p "Are your nodes using a proxy? (yes/no): " yn
     case $yn in
         [Yy]* ) # Reading HTTP_PROXY
-                echo -e "Enter your ENV http_proxy (must end with /): "
+                echo -n "Enter your ENV http_proxy: "
                 read httpx
-                sed -i "s/ http_proxy:/ http_proxy: $httpx/g" env_variables
+                sed -i "s+http_proxy:+http_proxy: $httpx+g" env_variables
                 # Reading HTTPS_PROXY
-                echo -e "Enter your ENV https_proxy (must end with /): "
+                echo -n "Enter your ENV https_proxy: "
                 read httpsx
-                sed -i "s/https_proxy:/https_proxy: $httpsx/g" env_variables
+                sed -i "s+https_proxy:+https_proxy: $httpsx+g" env_variables
                 # Reading NO_PROXY
                 echo -n "Enter your ENV no_proxy (comma serarated list supported, no spaces): "
                 read nopx
-                sed -i "s/no_proxy/no_proxy: $nopx/g" env_variables
+                sed -i "s+no_proxy:+no_proxy: $nopx+g" env_variables
                 echo -n "ENV proxy configured successfully"
                 break;;
         [Nn]* ) break;;
@@ -168,13 +169,13 @@ while true; do
     read -p "Are you using docker behind a proxy?:(yes/no)" yn
     case $yn in
         [Yy]* ) sed -i "s/DOCKER_PROXY_ENABLE: NO/DOCKER_PROXY_ENABLE: YES/g" env_variables;
-                cp templates/docker_proxy-template docker_proxy-template  docker-proxy.conf
+                cp templates/docker_proxy-template  docker-proxy.conf
                 # Reading HTTP_PROXY
-                echo -e "Enter your docker http_proxy (must end with /): "
+                echo -n "Enter your docker http_proxy: "
                 read httpx
                 sed -i "s/HTTPX/$httpx/g" docker-proxy.conf
                 # Reading HTTPS_PROXY
-                echo -e "Enter your docker https_proxy (must end with /): "
+                echo -n "Enter your docker https_proxy: "
                 read httpsx
                 sed -i "s/HTTPSX/$httpsx/g" docker-proxy.conf
                 # Reading NO_PROXY
