@@ -22,13 +22,13 @@ APT_GET_CMD=$(which apt-get)
  fi
 
 #Installing dependencies, you can add as many dependencies as you want.
-./scripts/install_packages.sh sshpass
+sudo ./scripts/install_packages.sh sshpass
 
 #Installing Ansible
 while true; do
     read -p "Do you want me to install ansible for you?:(yes/no)" yn
     case $yn in
-        [Yy]* ) ./scripts/install_ansible.sh ; break;;
+        [Yy]* ) sudo ./scripts/install_ansible.sh ; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer with yes or no.";;
     esac
