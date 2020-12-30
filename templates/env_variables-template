@@ -16,7 +16,7 @@ CENTOS_K8S_VERSION: 1.19.0
 # Do not change token_file value, unless you know what you are doing
 token_file: join_token
 # Choose if you would like to taint the master or no. default is no.
-TAINTED: NO
+TAINTED: no
 
 
 ####################################### KUBERNETES FEATURES VERSIONS & CONFIG SECTION ###################################
@@ -36,5 +36,5 @@ proxy_env:
   no_proxy:
 # will be called as environment: "{{ proxy_env }}"
 
-DOCKER_PROXY_ENABLE: NO
+DOCKER_PROXY_ENABLE: no
 

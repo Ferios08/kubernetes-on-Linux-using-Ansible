@@ -124,12 +124,13 @@
       become: yes
       shell: |
         mkdir -p /etc/systemd/system/docker.service.d
+        
     - name: Copying docker proxy conf
       become: yes
       template:
         src: docker-proxy.conf
         path: /etc/systemd/system/docker.service.d/http-proxy.conf
-      when: DOCKER_PROXY_ENABLE == "YES"
+      when: DOCKER_PROXY_ENABLE == "yes"
 
     - name: Restarting Docker service
       become: yes

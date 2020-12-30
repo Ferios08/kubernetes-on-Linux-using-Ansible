@@ -102,14 +102,14 @@ echo -e "Changed master's hostname to k8s-master"
 
 if [ "$workers" -eq "0" ]
 then
-  sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables
+  sed -i "s/TAINTED: NO/TAINTED: yes/g" env_variables
 
 else
   # Asking if the master is tainted:
   while true; do
       read -p "Do you wish to taint your master Node?:(yes/no)" yn
       case $yn in
-          [Yy]* ) sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables; break;;
+          [Yy]* ) sed -i "s/TAINTED: NO/TAINTED: yes/g" env_variables; break;;
           [Nn]* ) break;;
           * ) echo "Please answer with yes or no.";;
       esac
@@ -169,7 +169,7 @@ done
 while true; do
     read -p "Are you using docker behind a proxy?:(yes/no)" yn
     case $yn in
-        [Yy]* ) sed -i "s/DOCKER_PROXY_ENABLE: NO/DOCKER_PROXY_ENABLE: YES/g" env_variables;
+        [Yy]* ) sed -i "s/DOCKER_PROXY_ENABLE: NO/DOCKER_PROXY_ENABLE: yes/g" env_variables;
                 cp templates/docker_proxy-template  docker-proxy.conf
                 # Reading HTTP_PROXY
                 echo -n "Enter your docker http_proxy: "

@@ -43,4 +43,4 @@
 
   - name: Tainting the master node
     shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-    when: TAINTED == "YES"
+    when: TAINTED == "yes"
