@@ -93,10 +93,10 @@ done
 echo # blanc line
 # Copy the ssh key to the master
 sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$pvip 
- echo -e "Copied ssh-key to master node."
+echo -e "Copied ssh-key to master node."
 # Changing master's hostname
- ssh $pvip sudo hostnamectl set-hostname k8s-master
-  echo -e "Changed master's hostname to k8s-master"
+ssh $pvip sudo hostnamectl set-hostname k8s-master
+echo -e "Changed master's hostname to k8s-master"
 
 if [ $workers=0 ]
 then
