@@ -6,6 +6,7 @@
   - name: Installing Ingress Nginx
     shell: kubectl apply -f {{INGRESS_URL}}
     environment: "{{ proxy_env }}"
+    ignore_errors: yes
 
   - name: Patching Ingress deployment
     shell: kubectl patch deployment ingress-nginx-controller -n ingress-nginx --patch '{"spec":{"template":{"spec":{"hostNetwork":true}}}}'
@@ -15,12 +16,14 @@
     retries: 5
     delay: 20
     until: result.rc == 0
+    ignore_errors: yes
 
   - name: Installing Cert-manager
     shell: |
      kubectl create namespace cert-manager
      kubectl apply -f {{CERTMANAGER_URL}}
     environment: "{{ proxy_env }}"
+    ignore_errors: yes
 
   - name: Creating Let's encrypt manager Yaml setup
     file:
@@ -59,6 +62,7 @@
   - name: Installing OpenEBS
     shell: kubectl apply -f {{OPENEBES_URL}}
     environment: "{{ proxy_env }}"
+    ignore_errors: yes
 
   - name: Patching OpenEBS to be the default storage class
     shell: |
@@ -69,6 +73,7 @@
     retries: 5
     delay: 20
     until: result.rc == 0
+    ignore_errors: yes
 
   - name: Removing install files
     shell: rm -f get-docker.sh
