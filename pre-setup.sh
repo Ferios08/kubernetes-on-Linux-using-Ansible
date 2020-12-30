@@ -24,7 +24,7 @@ APT_GET_CMD=$(which apt-get)
 echo -e "Making scripts executable"
 chmod +x scripts/*
 #Installing dependencies, you can add as many dependencies as you want.
-./scripts/install_packages.sh sshpass
+./scripts/install_package.sh sshpass
 
 #Installing Ansible
 while true; do
