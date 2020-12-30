@@ -183,6 +183,7 @@ while true; do
                 echo -n "Enter your docker no_proxy (comma serarated list supported, no spaces): "
                 read nopx
                 sed -i "s+NOPX+$nopx+g" docker-proxy.conf
+                cp docker-proxy.conf $HOME/
                 echo -e "Docker proxy configured successfully"
                 break;;
         [Nn]* ) break;;

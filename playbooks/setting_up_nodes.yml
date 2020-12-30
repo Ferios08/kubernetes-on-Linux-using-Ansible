@@ -128,7 +128,7 @@
     - name: Copying docker proxy conf
       become: yes
       copy:
-        src: "{{ playbook_dir }}/docker-proxy.conf"
+        src: "/home/{{user}}/docker-proxy.conf"
         path: "/etc/systemd/system/docker.service.d/http-proxy.conf"
         follow: yes
       when: DOCKER_PROXY_ENABLE == "yes"
