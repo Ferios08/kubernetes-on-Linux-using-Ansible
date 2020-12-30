@@ -131,7 +131,7 @@
         src: "/home/{{user}}/docker-proxy.conf"
         path: "/etc/systemd/system/docker.service.d/http-proxy.conf"
         follow: yes
-      when: docker_proxy == "yes"
+      when: docker_proxy.find("yes") != -1
 
     - name: Restarting Docker service
       become: yes
