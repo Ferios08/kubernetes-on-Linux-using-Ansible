@@ -21,14 +21,16 @@ APT_GET_CMD=$(which apt-get)
     echo -e "System not supported :("
  fi
 
+echo -e "Making scripts executable"
+chmod +x scripts/*
 #Installing dependencies, you can add as many dependencies as you want.
-sudo ./scripts/install_packages.sh sshpass
+./scripts/install_packages.sh sshpass
 
 #Installing Ansible
 while true; do
     read -p "Do you want me to install ansible for you?:(yes/no)" yn
     case $yn in
-        [Yy]* ) sudo ./scripts/install_ansible.sh ; break;;
+        [Yy]* ) ./scripts/install_ansible.sh ; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer with yes or no.";;
     esac
