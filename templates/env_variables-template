@@ -34,10 +34,12 @@ CERTMANAGER_URL: https://github.com/jetstack/cert-manager/releases/download/v0.1
 
 # ###################################### ENVIRONMENT & PROXY CONFIG SECTION ###################################
 
+DOCKER_PROXY: no
+
 proxy_env:
   http_proxy: 
   https_proxy: 
   no_proxy: 
 
-docker_proxy: no
+
 
