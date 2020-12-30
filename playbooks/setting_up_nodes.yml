@@ -129,8 +129,9 @@
       become: yes
       copy:
         src: "/home/{{user}}/docker-proxy.conf"
-        path: "/etc/systemd/system/docker.service.d/http-proxy.conf"
+        dest : "/etc/systemd/system/docker.service.d/http-proxy.conf"
         follow: yes
+      when: DOCKER_PROXY == "true"
 
     - name: Restarting Docker service
       become: yes
