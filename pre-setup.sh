@@ -154,10 +154,10 @@ while true; do
                 read httpsx
                 sed -i "s+https_proxy:+https_proxy: $httpsx+g" env_variables
                 # Reading NO_PROXY
-                echo -n "Enter your ENV no_proxy (comma serarated list supported, no spaces): "
+                echo -n "Enter your ENV no_proxy (comma serarated list supported, no spaces)Enter if empty: "
                 read nopx
                 sed -i "s+no_proxy:+no_proxy: $nopx+g" env_variables
-                echo -n "ENV proxy configured successfully"
+                echo -e "ENV proxy configured successfully"
                 break;;
         [Nn]* ) break;;
         * ) echo "Please answer with yes or no.";;
@@ -173,22 +173,24 @@ while true; do
                 # Reading HTTP_PROXY
                 echo -n "Enter your docker http_proxy: "
                 read httpx
-                sed -i "s/HTTPX/$httpx/g" docker-proxy.conf
+                sed -i "s+HTTPX+$httpx+g" docker-proxy.conf
                 # Reading HTTPS_PROXY
                 echo -n "Enter your docker https_proxy: "
                 read httpsx
-                sed -i "s/HTTPSX/$httpsx/g" docker-proxy.conf
+                sed -i "s+HTTPSX+$httpsx+g" docker-proxy.conf
                 # Reading NO_PROXY
                 echo -n "Enter your docker no_proxy (comma serarated list supported, no spaces): "
                 read nopx
-                sed -i "s/NOPX/$nopx/g" docker-proxy.conf
-                echo -n "Docker proxy configured successfully"
+                sed -i "s+NOPX+$nopx+g" docker-proxy.conf
+                echo -e "Docker proxy configured successfully"
                 break;;
         [Nn]* ) break;;
         * ) echo "Please answer with yes or no.";;
     esac
 done
 
+echo
+echo
 
 echo -ne '######                     (25%)\r'
 sleep 1
