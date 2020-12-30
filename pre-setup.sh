@@ -31,7 +31,7 @@ while true; do
     read -p "Do you want me to install ansible for you?:(yes/no)" yn
     case $yn in
         [Yy]* ) ./scripts/install_ansible.sh ; break;;
-        [Nn]* ) exit;;
+        [Nn]* ) echo -e "As you like."; break;;
         * ) echo "Please answer with yes or no.";;
     esac
 done

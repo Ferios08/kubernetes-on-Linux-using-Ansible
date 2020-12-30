@@ -1,7 +1,6 @@
 # Find out which system I am :)
 YUM_CMD=$(which yum  2> /dev/null)
 APT_GET_CMD=$(which apt-get  2> /dev/null)
-for i in $*; do  
     if [[ ! -z $YUM_CMD ]]; then
         echo -e "Installing Ansible on CentOS"
         sudo yum install -y epel-release  && sudo yum install ansible -y
