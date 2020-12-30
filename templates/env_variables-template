@@ -1,8 +1,10 @@
-#Enter the IP Address of the Kubernetes Master node to the ad_addr variable.
+
+######################################## IPS & USER SECTION ###################################################
 cluster_prv_ip: internalIP
 cluster_pub_ip: externalIP
 user: username
 
+####################################### KUBERNETES VERSION & CONFIG SECTION ###################################
 # The kubernetes version you need to install
 # Please be careful of the fact that version form is different in Ubuntu and and CentOS
 # For Example in Ubuntu we have 1.19.0-00, in centOS it is 1.19.0
@@ -11,15 +13,24 @@ user: username
 UBUNTU_K8S_VERSION: 1.19.0-00
 CENTOS_K8S_VERSION: 1.19.0
 
+# Do not change token_file value, unless you know what you are doing
+token_file: join_token
+# Choose if you would like to taint the master or no. default is no.
+TAINTED: NO
 
+
+####################################### KUBERNETES FEATURES VERSIONS & CONFIG SECTION ###################################
+# For easy update/upgrade, just change the URL:
 POD_NETWORK : weavenet
 LetEncrypytEmail : mymail
-
-# Do not change.
-token_file: join_token
-
-# For easy update/upgrade, just change the URL:
 INGRESS_URL: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/cloud/deploy.yaml
 OPENEBES_URL: https://openebs.github.io/charts/openebs-operator.yaml
 CERTMANAGER_URL: https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
 
+
+####################################### ENVIRONMENT & PROXY CONFIG SECTION ###################################
+
+proxy_env:
+  http_proxy: http://proxy.bos.example.com:8080
+  https_proxy: http://proxy.bos.example.com:8080
+# will be called as environment: "{{ proxy_env }}"

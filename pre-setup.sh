@@ -29,6 +29,22 @@ sed -i "s/username/$username/g" env_variables
 
 echo -n "How many worker nodes do you have?: "
 read workers
+while true; do
+
+    case "$workers" in
+        -*)
+            echo "Wrong number value, please enter a positive value."
+            ;;
+        [0-9]*) break;;
+           
+        *)
+            echo "Wrong number value, please enter a positive value."
+            ;;
+    esac
+
+    read -p "How many worker nodes do you have?: " workers
+
+done
 
 # Generating ssh key / ignoring if already exist
 ssh-keygen -t rsa -f $HOME/.ssh/id_rsa  -q -P ""  <<< y
@@ -56,24 +72,37 @@ sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$pvip
  ssh $pvip sudo hostnamectl set-hostname k8s-master
   echo -e "Changed master's hostname to k8s-master"
 
+if [ $workers=0 ]
+then
+  sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables
 
+else
+  # Asking if the master is tainted:
+  while true; do
+      read -p "Do you wish to taint your master Node?:(yes/no)" yn
+      case $yn in
+          [Yy]* ) sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables; break;;
+          [Nn]* ) exit;;
+          * ) echo "Please answer with yes or no.";;
+      esac
+  done
+  # ADDING WORKER NODES
+  for (( i = 1; i < workers+1; i++ ))
+  do
 
-for (( i = 1; i < workers+1; i++ ))
-do
+    echo -n "enter ther worker number $i's ip: "
+    read ip
+    echo "k8s-worker-$i ansible_host=$ip  ansible_user=$username" >> hosts
+    echo -n "Node worker-$i added to hosts file."
+    echo # blanc line
 
-   echo -n "enter ther worker number $i's ip: "
-   read ip
-   echo "k8s-worker-$i ansible_host=$ip  ansible_user=$username" >> hosts
-   echo -n "Node worker-$i added to hosts file."
-   echo # blanc line
+    sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$ip 
+    echo -e "Copied ssh-key to worker-$i Node."
+    echo # blanc line
+    ssh $ip sudo hostnamectl set-hostname k8s-worker-$i
+    echo -e "Changed node's hostname to k8s-worker-$i"
 
-   sshpass -p "$password" ssh-copy-id -o StrictHostKeychecking=no $username@$ip 
-   echo -e "Copied ssh-key to worker-$i Node."
-   echo # blanc line
-   ssh $ip sudo hostnamectl set-hostname k8s-worker-$i
-   echo -e "Changed node's hostname to k8s-worker-$i"
-
-done
+  done
 
 echo -n "Please enter your mail that will be used by lets Encypt: "
 read mail

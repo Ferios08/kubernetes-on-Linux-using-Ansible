@@ -32,8 +32,12 @@
      kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
     when: POD_NETWORK == "weavenet"
 
-  - name: IInstalling Calico Network Addon
+  - name: Installing Calico Network Addon
     shell: |
      kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
      kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
     when: POD_NETWORK == "calico"
+
+  - name: Tainting the master node
+    shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+    when: TAINTED == "YES"
