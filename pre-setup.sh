@@ -54,23 +54,24 @@ sed -i "s/ansible_user=/ansible_user=$username/g" hosts
 sed -i "s/username/$username/g" env_variables
 
 
-echo -n "How many worker nodes do you have?: "
-read workers
+
 while true; do
+    re='^[0-9]+$'
+   
+    echo -n "How many worker nodes do you have?: "
+    read workers
 
-    case "$workers" in
-        -*)
-            echo "Wrong number value, please enter a positive value."
-            ;;
-        [0-9]*) break;;
-           
-        *)
-            echo "Wrong number value, please enter a positive value."
-            ;;
-    esac
+    if  ! [[ $workers =~ $re ]] ; then
+        echo -e "Invalid value."
 
-    read -p "How many worker nodes do you have?: " workers
+    elif [ $workers -lt 0 ] ; then   
+        echo -e "Wrong number value, please enter a positive value."
 
+    elif  [ $workers -gt -1 ] ; then
+        break
+
+    fi
+    echo
 done
 
 # Generating ssh key / ignoring if already exist
@@ -99,7 +100,7 @@ echo -e "Copied ssh-key to master node."
 ssh $pvip sudo hostnamectl set-hostname k8s-master
 echo -e "Changed master's hostname to k8s-master"
 
-if [ $workers=0 ]
+if [ "$workers" -eq "0" ]
 then
   sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables
 
