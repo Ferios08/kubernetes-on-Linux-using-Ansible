@@ -36,14 +36,6 @@ while true; do
     esac
 done
 
- while true; do
-      read -p "Do you wish to taint your master Node?:(yes/no)" yn
-      case $yn in
-          [Yy]* ) sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables; break;;
-          [Nn]* ) exit;;
-          * ) echo "Please answer with yes or no.";;
-      esac
-  done
 
 echo -n "What is the master's private IP?: "
 read pvip
@@ -116,7 +108,7 @@ else
       read -p "Do you wish to taint your master Node?:(yes/no)" yn
       case $yn in
           [Yy]* ) sed -i "s/TAINTED: NO/TAINTED: YES/g" env_variables; break;;
-          [Nn]* ) exit;;
+          [Nn]* ) break;;
           * ) echo "Please answer with yes or no.";;
       esac
   done
@@ -166,7 +158,7 @@ while true; do
                 sed -i "s/no_proxy/no_proxy: $nopx/g" env_variables
                 echo -n "ENV proxy configured successfully"
                 break;;
-        [Nn]* ) exit;;
+        [Nn]* ) break;;
         * ) echo "Please answer with yes or no.";;
     esac
 done
@@ -191,7 +183,7 @@ while true; do
                 sed -i "s/NOPX/$nopx/g" docker-proxy.conf
                 echo -n "Docker proxy configured successfully"
                 break;;
-        [Nn]* ) exit;;
+        [Nn]* ) break;;
         * ) echo "Please answer with yes or no.";;
     esac
 done
