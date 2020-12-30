@@ -27,6 +27,7 @@
         name: [curl, wget, lvm2]
         state: latest
       when: ansible_os_family == "Debian"
+      environment: "{{ proxy_env }}"
 
     - name: Installing Dependencies (CentOS)
       become: yes
@@ -34,6 +35,7 @@
         name: [yum-utils, device-mapper-persistent-data, lvm2, wget]
         state: latest
       when: ansible_os_family in ["CentOS","RedHat"]
+      environment: "{{ proxy_env }}"
 
     - name: Creating a repository file for Kubernetes (Ubuntu)
       become: yes
@@ -47,6 +49,8 @@
       shell: |
         curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       when: ansible_os_family == "Debian"
+      environment: "{{ proxy_env }}"
+
     - name: Adding repository details in Kubernetes repo file  (Ubuntu)
       become: yes
       blockinfile:
@@ -82,6 +86,7 @@
         curl -fsSL https://get.docker.com -o get-docker.sh
         chmod +x get-docker.sh
         ./get-docker.sh
+      environment: "{{ proxy_env }}"
 
     - name: Installing Container SELinux (CentOS)
       become: yes
@@ -89,6 +94,7 @@
         name: http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-1.el7_6.noarch.rpm
         state: present
       when: ansible_os_family in ["CentOS","RedHat"]
+      environment: "{{ proxy_env }}"
       
 
     - name: Changing docker defaul cgroup.
@@ -118,15 +124,12 @@
       become: yes
       shell: |
         mkdir -p /etc/systemd/system/docker.service.d
-        touch /etc/systemd/system/docker.service.d/http-proxy.conf
-
-    - name: Setting Docker proxy
+    - name: Copying docker proxy conf
       become: yes
-      blockinfile:
+      template:
+        src: docker-proxy.conf
         path: /etc/systemd/system/docker.service.d/http-proxy.conf
-        block: |
-          [Service]
-          Environment="HTTP_PROXY=" "HTTPS_PROXY=" "NO_PROXY="
+      when: DOCKER_PROXY_ENABLE == "YES"
 
     - name: Restarting Docker service
       become: yes
@@ -146,11 +149,13 @@
         - kubeadm={{ UBUNTU_K8S_VERSION }}
         - kubelet={{ UBUNTU_K8S_VERSION }}
       when: ansible_os_family == "Debian"
+      environment: "{{ proxy_env }}"
 
     - name: Prevent kubeadm, kubectl, kubelet from upgrading
       become: yes
       shell:  apt-mark hold kubelet kubeadm kubectl
       when: ansible_os_family == "Debian"
+      environment: "{{ proxy_env }}"
 
     - name: Installing Kubernetes (CentOS)
       become: yes
@@ -164,6 +169,7 @@
         - kubeadm-{{ CENTOS_K8S_VERSION }}
         - kubelet-{{ CENTOS_K8S_VERSION }}
       when: ansible_os_family in ["CentOS","RedHat"]
+      environment: "{{ proxy_env }}"
 
     - name: Starting and Enabling docker service
       become: yes

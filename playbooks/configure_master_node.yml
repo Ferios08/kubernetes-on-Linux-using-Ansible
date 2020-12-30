@@ -6,6 +6,7 @@
   tasks:
   - name: Pulling images required for setting up a Kubernetes cluster
     shell: sudo kubeadm config images pull
+    environment: "{{ proxy_env }}"
 
   - name: Resetting kubeadm
     shell: sudo kubeadm reset -f
@@ -31,12 +32,14 @@
     shell: |
      kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
     when: POD_NETWORK == "weavenet"
+    environment: "{{ proxy_env }}"
 
   - name: Installing Calico Network Addon
     shell: |
      kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
      kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
     when: POD_NETWORK == "calico"
+    environment: "{{ proxy_env }}"
 
   - name: Tainting the master node
     shell: kubectl taint nodes --all node-role.kubernetes.io/master-

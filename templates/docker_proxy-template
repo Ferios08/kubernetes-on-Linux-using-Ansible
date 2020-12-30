@@ -1,0 +1,2 @@
+[Service]
+Environment="HTTP_PROXY=HTTPX" "HTTPS_PROXY=HTTPSX" "NO_PROXY=NOPX"

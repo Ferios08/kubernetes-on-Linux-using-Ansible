@@ -22,13 +22,13 @@ APT_GET_CMD=$(which apt-get)
  fi
 
 #Installing dependencies, you can add as many dependencies as you want.
-./files/install_packages.sh sshpass
+./scripts/install_packages.sh sshpass
 
 #Installing Ansible
 while true; do
     read -p "Do you want me to install ansible for you?:(yes/no)" yn
     case $yn in
-        [Yy]* ) ./files/install_ansible.sh ; break;;
+        [Yy]* ) ./scripts/install_ansible.sh ; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer with yes or no.";;
     esac
@@ -145,6 +145,54 @@ read plugin
 sed -i "s/weavenet/$plugin/g" env_variables
 
 echo -e "To install a specific version of Kubernetes, set it up manually in the env_variables file:"
+
+#Configuring Env Proxy
+while true; do
+    read -p "Are your nodes using a proxy?:(yes/no)" yn
+    case $yn in
+        [Yy]* ) # Reading HTTP_PROXY
+                echo -e "Enter your ENV http_proxy (must end with /): "
+                read httpx
+                sed -i "s/ http_proxy:/ http_proxy: $httpx/g" env_variables
+                # Reading HTTPS_PROXY
+                echo -e "Enter your ENV https_proxy (must end with /): "
+                read httpsx
+                sed -i "s/https_proxy:/https_proxy: $httpsx/g" env_variables
+                # Reading NO_PROXY
+                echo -n "Enter your ENV no_proxy (comma serarated list supported, no spaces): "
+                read nopx
+                sed -i "s/no_proxy/no_proxy: $nopx/g" env_variables
+                echo -n "ENV proxy configured successfully"
+                break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer with yes or no.";;
+    esac
+done
+
+#Configuring Docker Proxy
+while true; do
+    read -p "Are you using docker behind a proxy?:(yes/no)" yn
+    case $yn in
+        [Yy]* ) sed -i "s/DOCKER_PROXY_ENABLE: NO/DOCKER_PROXY_ENABLE: YES/g" env_variables;
+                cp templates/docker_proxy-template docker_proxy-template  docker-proxy.conf
+                # Reading HTTP_PROXY
+                echo -e "Enter your docker http_proxy (must end with /): "
+                read httpx
+                sed -i "s/HTTPX/$httpx/g" docker-proxy.conf
+                # Reading HTTPS_PROXY
+                echo -e "Enter your docker https_proxy (must end with /): "
+                read httpsx
+                sed -i "s/HTTPSX/$httpsx/g" docker-proxy.conf
+                # Reading NO_PROXY
+                echo -n "Enter your docker no_proxy (comma serarated list supported, no spaces): "
+                read nopx
+                sed -i "s/NOPX/$nopx/g" docker-proxy.conf
+                echo -n "Docker proxy configured successfully"
+                break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer with yes or no.";;
+    esac
+done
 
 
 echo -ne '######                     (25%)\r'
